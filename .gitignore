@@ -17,3 +17,6 @@ npm-debug.log
 
 # Editors
 .settings
+
+# private
+www

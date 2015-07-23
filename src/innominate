@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+
+var config   = require('./config.json');
+var mime     = require('./mime.json');
+var fs       = require('fs');
+var protocol = require(config.server.protocol);
+var path     = require('path');
+
+function getHead(uri) {
+    uri = uri || '/';
+    uri = uri.split('/');
+    uri = uri[uri.length -1].split('.')[1];
+    var content_type = mime[uri] || 'text/plain';
+    return {'Content-Type': content_type};
+}
+
+function response404(res) {
+    res.writeHead(404, getHead(url));
+    res.end('PAGINA NÃO ENCONTRADA\n');
+}
+
+var server = protocol.createServer(function (req, res) {
+    var url = req.url === '/' ? './www/index.html' : './www' + req.url;
+
+    fs.exists(url, function (exists) {
+        if (exists) {
+            fs.readFile(url, 'utf-8', function (err, data) {
+                if(err) response404(res);
+                else {
+                    res.writeHead(200, getHead(url));
+                    res.end(data);
+                }
+            });
+        }
+        else response404(res);
+    });
+});
+
+server.listen(config.server.port, '127.0.0.1');
+console.log('Server running at http://127.0.0.1:' + config.server.port);

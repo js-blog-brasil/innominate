@@ -1,0 +1,6 @@
+{
+    "server" : {
+        "port" : 2212,
+        "protocol" : "http"
+    }
+}
